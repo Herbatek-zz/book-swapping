@@ -1,39 +1,57 @@
 package com.piotrek.bookswapping.controllers;
 
 import com.piotrek.bookswapping.entities.User;
+import com.piotrek.bookswapping.exceptions.CarNotFoundException;
 import com.piotrek.bookswapping.services.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
 public class UserController {
 
-    @Autowired
     private UserService userService;
 
-    @GetMapping
-    public ResponseEntity<User> getStudents() {
+    public UserController(UserService userService) {
+        this.userService = userService;
+    }
 
-        return null;
+    @GetMapping
+    public ResponseEntity<Iterable<User>> findAllUsers() {
+        Iterable<User> users = userService.findAllUsers();
+        return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<User> createStudent() {
+    public ResponseEntity<?> createUser(@Valid @RequestBody User user, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            List errors = bindingResult.getAllErrors();
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        User createdUser = userService.createUser(user);
+        return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{userId}")
+    public ResponseEntity<User> updateUser(@PathVariable Long userId) {
 
         return null;
     }
 
-    @PutMapping
-    public ResponseEntity<User> updateStudent() {
-
-        return null;
+    @DeleteMapping("/{userId}")
+    public ResponseEntity deleteUser(@PathVariable Long userId) {
+        userService.deleteUser(userId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
-    @DeleteMapping
-    public ResponseEntity<User> deleteStudent() {
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    private void userNotFoundHandler(CarNotFoundException e) {
 
-        return null;
     }
 }

@@ -4,42 +4,52 @@ import com.piotrek.bookswapping.entities.Book;
 import com.piotrek.bookswapping.services.BookService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @RestController
 @RequestMapping("/books")
 public class BookController {
 
-    /** The application logger */
     private static final Logger LOG = LoggerFactory.getLogger(BookController.class);
 
-    @Autowired
     private BookService bookService;
 
-    @GetMapping
-    public ResponseEntity<Book> getBooks() {
+    public BookController(BookService bookService) {
+        this.bookService = bookService;
+    }
 
-        return null;
+    @GetMapping
+    public ResponseEntity<Iterable<Book>> findAllBooks() {
+        Iterable<Book> books = bookService.findAllBooks();
+        return new ResponseEntity<>(books, HttpStatus.OK);
     }
 
     @PostMapping
-    public ResponseEntity<Book> createBook() {
-
-        return null;
+    public ResponseEntity<?> createBook(@Valid @RequestBody Book book, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            List errors = bindingResult.getAllErrors();
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        Book createdBook = bookService.createBook(book);
+        return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
 
-    @PutMapping
-    public ResponseEntity<Book> updateBook() {
-
-        return null;
+    @PutMapping("/{bookId}")
+    public ResponseEntity<Book> updateBook(@PathVariable Long bookId, @Valid @RequestBody Book updateForBook) {
+        Book updatedBook = bookService.updateBook(bookId, updateForBook);
+        return new ResponseEntity<>(updatedBook, HttpStatus.OK);
     }
 
-    @DeleteMapping
-    public ResponseEntity<Book> deleteBook() {
-
-        return null;
+    @DeleteMapping("/{bookId}")
+    public ResponseEntity deleteBook(@PathVariable Long bookId) {
+        bookService.deleteBook(bookId);
+        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
 }

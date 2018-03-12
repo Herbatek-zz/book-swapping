@@ -5,27 +5,31 @@ import com.piotrek.bookswapping.respositories.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
 public class UserService {
 
-    @Autowired
     private UserRepository userRepository;
 
-    public List<User> getUsers() {
-        return null;
+    public UserService(UserRepository userRepository) {
+        this.userRepository = userRepository;
     }
 
-    public User createUser() {
-        return null;
+    public Iterable<User> findAllUsers() {
+        return userRepository.findAll();
+    }
+
+    public User createUser(User user) {
+        return userRepository.save(user);
     }
 
     public User updateUser() {
         return null;
     }
 
-    public User deleteUser() {
-        return null;
+    public void deleteUser(Long id) {
+        userRepository.deleteById(id);
     }
 }

@@ -21,5 +21,16 @@ public class Book {
     @Size(min = 1, max = 200)
     private String title;
 
+    //@NotBlank
+    private String description;
+
     private Integer releaseYear;
+
+    public Book() {
+
+    }
+
+    public Book(String title) {
+        this.title = title;
+    }
 }
