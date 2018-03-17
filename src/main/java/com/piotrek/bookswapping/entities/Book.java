@@ -1,23 +1,32 @@
 package com.piotrek.bookswapping.entities;
 
+import com.fasterxml.jackson.annotation.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.io.Serializable;
 
 @Entity
 @Data
-public class Book {
+@NoArgsConstructor
+@RequiredArgsConstructor
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.IntSequenceGenerator.class,
+        property = "id")
+public class Book implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue
+    @Column(updatable = false, nullable = false)
     private Long id;
 
     @NotBlank
+    @NonNull
     @Size(min = 1, max = 200)
     private String title;
 
@@ -26,11 +35,12 @@ public class Book {
 
     private Integer releaseYear;
 
-    public Book() {
+    @ManyToOne
+    @JoinColumn(
+            name = "user_id",
+            nullable = false)
+    @JsonIdentityReference(alwaysAsId = true)
+    private User user;
 
-    }
 
-    public Book(String title) {
-        this.title = title;
-    }
 }

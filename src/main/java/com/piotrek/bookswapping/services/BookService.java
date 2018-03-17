@@ -5,8 +5,6 @@ import com.piotrek.bookswapping.exceptions.BookNotFoundException;
 import com.piotrek.bookswapping.respositories.BookRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.function.Supplier;
-
 @Service
 public class BookService {
 
@@ -18,6 +16,10 @@ public class BookService {
 
     public Iterable<Book> findAllBooks() {
         return bookRepository.findAll();
+    }
+
+    public Book findBookById(Long bookId) {
+        return bookRepository.findById(bookId).orElseThrow(BookNotFoundException::new);
     }
 
     public Book createBook(Book book) {
@@ -37,7 +39,8 @@ public class BookService {
     }
 
     public void deleteBook(Long id) {
-        bookRepository.deleteById(id);
+        Book book = bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
+        bookRepository.delete(book);
     }
 
 }

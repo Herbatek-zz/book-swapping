@@ -40,48 +40,52 @@ public class UserControllerTest {
     @MockBean
     private UserService userService;
 
-    private User user;
+    private User userForSave;
+    private User readUser;
+
+    private final Long ID = 1L;
+    private final String EMAIL = "userForSave@email.com";
+    private final String USERNAME = "username";
+    private final String PASSWORD = "password123";
+    private final String FIRST_NAME = "Jan";
+    private final String LAST_NAME = "Kowalski";
+
 
     @Before
-    public void init() {
-        user = new User();
-        user.setId(1L);
-        user.setFirstName("Piotr");
-        user.setLastName("Cużytek");
-        user.setPassword("password");
-        user.setUsername("kenshin");
-        user.setEmail("kenshin@email.com");
-
+    public void setUp() {
+        userForSave = new User(FIRST_NAME, LAST_NAME,USERNAME, PASSWORD, EMAIL);
+        readUser = new User(FIRST_NAME, LAST_NAME,USERNAME, PASSWORD, EMAIL);
+        readUser.setId(1L);
     }
 
     @Test
     public void postUser_ShouldReturnUser() throws Exception {
-        when(userService.createUser(user)).thenReturn(user);
+        when(userService.createUser(userForSave)).thenReturn(readUser);
 
         mockMvc.perform(post("/users")
         .contentType(MediaType.APPLICATION_JSON_UTF8)
-        .content(objectMapper.writeValueAsString(user)))
+        .content(objectMapper.writeValueAsString(userForSave)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(jsonPath("id").value("1"))
-                .andExpect(jsonPath("firstName").value("Piotr"))
-                .andExpect(jsonPath("lastName").value("Cużytek"))
-                .andExpect(jsonPath("password").value("password"))
-                .andExpect(jsonPath("email").value("kenshin@email.com"))
-                .andExpect(jsonPath("username").value("kenshin"));
+                .andExpect(jsonPath("id").value(1))
+                .andExpect(jsonPath("firstName").value(FIRST_NAME))
+                .andExpect(jsonPath("lastName").value(LAST_NAME))
+                .andExpect(jsonPath("password").value(PASSWORD))
+                .andExpect(jsonPath("email").value(EMAIL))
+                .andExpect(jsonPath("username").value(USERNAME));
     }
 
     @Test
     public void postUserWithoutPassword_ShouldReturnBadRequest() throws Exception {
 
-        user.setPassword(null);
+        userForSave.setPassword("");
 
-        when(userService.createUser(user)).thenReturn(user);
+        when(userService.createUser(userForSave)).thenReturn(userForSave);
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
-                .content(objectMapper.writeValueAsString(user)))
+                .content(objectMapper.writeValueAsString(userForSave)))
                 .andDo(print())
                 .andExpect(status().isBadRequest());
     }
@@ -90,7 +94,7 @@ public class UserControllerTest {
     public void getAllUsers_ShouldReturnUsers() throws Exception {
 
         ArrayList<User> users = new ArrayList<>();
-        users.add(user);
+        users.add(readUser);
 
         when(userService.findAllUsers()).thenReturn(users);
 
@@ -102,10 +106,10 @@ public class UserControllerTest {
                 .andExpect(jsonPath("$").isArray())
                 .andExpect(jsonPath("$", hasSize(1)))
                 .andExpect(jsonPath("$[0].id").value("1"))
-                .andExpect(jsonPath("$[0].firstName").value("Piotr"))
-                .andExpect(jsonPath("$[0].lastName").value("Cużytek"))
-                .andExpect(jsonPath("$[0].password").value("password"))
-                .andExpect(jsonPath("$[0].email").value("kenshin@email.com"))
-                .andExpect(jsonPath("$[0].username").value("kenshin"));
+                .andExpect(jsonPath("$[0].firstName").value(FIRST_NAME))
+                .andExpect(jsonPath("$[0].lastName").value(LAST_NAME))
+                .andExpect(jsonPath("$[0].password").value(PASSWORD))
+                .andExpect(jsonPath("$[0].email").value(EMAIL))
+                .andExpect(jsonPath("$[0].username").value(USERNAME));
     }
 }

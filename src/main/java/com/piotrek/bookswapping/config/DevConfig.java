@@ -13,8 +13,8 @@ import org.h2.server.web.WebServlet;
 public class DevConfig {
 
     @Bean
-    public ServletRegistrationBean h2ConsoleServletRegistration() {
-        ServletRegistrationBean bean = new ServletRegistrationBean(new WebServlet());
+    public ServletRegistrationBean<WebServlet> h2ConsoleServletRegistration() {
+        ServletRegistrationBean<WebServlet> bean = new ServletRegistrationBean<>(new WebServlet());
         bean.addUrlMappings("/console/*");
         return bean;
     }
