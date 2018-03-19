@@ -60,7 +60,7 @@ public class UserControllerTest {
 
     @Test
     public void postUser_ShouldReturnUser() throws Exception {
-        when(userService.createUser(userForSave)).thenReturn(readUser);
+        when(userService.create(userForSave)).thenReturn(readUser);
 
         mockMvc.perform(post("/users")
         .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -81,7 +81,7 @@ public class UserControllerTest {
 
         userForSave.setPassword("");
 
-        when(userService.createUser(userForSave)).thenReturn(userForSave);
+        when(userService.create(userForSave)).thenReturn(userForSave);
 
         mockMvc.perform(post("/users")
                 .contentType(MediaType.APPLICATION_JSON_UTF8)
@@ -96,7 +96,7 @@ public class UserControllerTest {
         ArrayList<User> users = new ArrayList<>();
         users.add(readUser);
 
-        when(userService.findAllUsers()).thenReturn(users);
+        when(userService.findAll()).thenReturn(users);
 
         mockMvc.perform(get("/users")
         .contentType(MediaType.APPLICATION_JSON_UTF8)

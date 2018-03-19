@@ -1,7 +1,8 @@
 package com.piotrek.bookswapping.controllers;
 
-import com.piotrek.bookswapping.entities.Book;
+import com.piotrek.bookswapping.entities.BookForExchange;
 import com.piotrek.bookswapping.entities.User;
+import com.piotrek.bookswapping.entities.WantedBook;
 import com.piotrek.bookswapping.exceptions.UserNotFoundException;
 import com.piotrek.bookswapping.services.UserService;
 import org.springframework.http.HttpStatus;
@@ -24,13 +25,13 @@ public class UserController {
 
     @GetMapping
     public ResponseEntity<Iterable<User>> findAllUsers() {
-        Iterable<User> users = userService.findAllUsers();
+        Iterable<User> users = userService.findAll();
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> findUser(@PathVariable Long userId) {
-        User user = userService.findUserById(userId);
+    @GetMapping("/{id}")
+    public ResponseEntity<User> findUser(@PathVariable Long id) {
+        User user = userService.findById(id);
         return new ResponseEntity<>(user, HttpStatus.OK);
     }
 
@@ -40,31 +41,44 @@ public class UserController {
             List errors = bindingResult.getAllErrors();
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
-        User createdUser = userService.createUser(user);
+        User createdUser = userService.create(user);
         return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
     }
 
-    @PostMapping("{userId}/books")
-    public ResponseEntity<?> createBook(@PathVariable Long userId, @Valid @RequestBody Book book,
-                                        BindingResult bindingResult) {
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @Valid @RequestBody User updateForUser, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
-            List<org.springframework.validation.ObjectError> errors = bindingResult.getAllErrors();
+            List errors = bindingResult.getAllErrors();
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
         }
-        Book createdBook = userService.createBook(userId, book);
-        return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
-    }
-
-    @PutMapping("/{userId}")
-    public ResponseEntity<User> updateUser(@PathVariable Long userId, @Valid @RequestBody User updateForUser) {
-        User updatedUser = userService.updateUser(userId, updateForUser);
+        User updatedUser = userService.update(id, updateForUser);
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @DeleteMapping("/{userId}")
-    public ResponseEntity deleteUser(@PathVariable Long userId) {
-        userService.deleteUser(userId);
+    @DeleteMapping("/{id}")
+    public ResponseEntity deleteUser(@PathVariable Long id) {
+        userService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @PostMapping("{id}/wanted-books")
+    public ResponseEntity<?> createWantedBook(@PathVariable Long id, @Valid @RequestBody WantedBook wantedBook, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            List errors = bindingResult.getAllErrors();
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        WantedBook createdBook = userService.createWantedBook(id, wantedBook);
+        return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
+    }
+
+    @PostMapping("{id}/book-for-exchange")
+    public ResponseEntity<?> createBookForExchange(@PathVariable Long id, @Valid @RequestBody BookForExchange bookForExchange, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            List errors = bindingResult.getAllErrors();
+            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        }
+        BookForExchange createdBook = userService.createBookForExchange(id, bookForExchange);
+        return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
 
     @ExceptionHandler

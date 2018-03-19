@@ -1,6 +1,6 @@
 package com.piotrek.bookswapping.entities;
 
-import com.fasterxml.jackson.annotation.*;
+import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -15,13 +15,10 @@ import java.io.Serializable;
 @Data
 @NoArgsConstructor
 @RequiredArgsConstructor
-@JsonIdentityInfo(
-        generator = ObjectIdGenerators.IntSequenceGenerator.class,
-        property = "id")
-public class Book implements Serializable {
+public class WantedBook implements Serializable {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     private Long id;
 
@@ -41,6 +38,4 @@ public class Book implements Serializable {
             nullable = false)
     @JsonIdentityReference(alwaysAsId = true)
     private User user;
-
-
 }

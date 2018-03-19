@@ -2,7 +2,6 @@ package com.piotrek.bookswapping;
 
 import com.piotrek.bookswapping.respositories.BookRepository;
 import com.piotrek.bookswapping.respositories.UserRepository;
-import com.piotrek.bookswapping.services.BookService;
 import com.piotrek.bookswapping.services.UserService;
 import org.junit.Test;
 import org.junit.runner.RunWith;

@@ -34,7 +34,7 @@ public class User implements Serializable, UserDetails {
 
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(updatable = false, nullable = false)
     private Long id;
 
@@ -75,7 +75,12 @@ public class User implements Serializable, UserDetails {
     @OneToMany(
             cascade = CascadeType.ALL,
             mappedBy = "user")
-    private List<Book> books = new ArrayList<>();
+    private List<BookForExchange> booksForExchange = new ArrayList<>();
+
+    @OneToMany(
+            cascade = CascadeType.ALL,
+            mappedBy = "user")
+    private List<WantedBook> wantedBooks = new ArrayList<>();
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

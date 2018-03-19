@@ -1,35 +1,43 @@
 package com.piotrek.bookswapping.services;
 
-import com.piotrek.bookswapping.entities.Book;
+import com.piotrek.bookswapping.entities.BookForExchange;
 import com.piotrek.bookswapping.entities.User;
+import com.piotrek.bookswapping.entities.WantedBook;
 import com.piotrek.bookswapping.exceptions.UserNotFoundException;
 import com.piotrek.bookswapping.respositories.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.validation.Valid;
+
+@Slf4j
 @Service
 public class UserService {
 
     private UserRepository userRepository;
-    private BookService bookService;
+    private BookForExchangeService bookForExchangeService;
+    private WantedBookService wantedBookService;
 
-    public UserService(UserRepository userRepository, BookService bookService) {
+    public UserService(UserRepository userRepository, BookForExchangeService bookForExchangeService,
+                       WantedBookService wantedBookService) {
         this.userRepository = userRepository;
-        this.bookService = bookService;
+        this.bookForExchangeService = bookForExchangeService;
+        this.wantedBookService = wantedBookService;
     }
 
-    public Iterable<User> findAllUsers() {
+    public Iterable<User> findAll() {
         return userRepository.findAll();
     }
 
-    public User findUserById(Long userId) {
+    public User findById(Long userId) {
         return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
     }
 
-    public User createUser(User user) {
+    public User create(User user) {
         return userRepository.save(user);
     }
 
-    public User updateUser(Long userId, User updateForUser) {
+    public User update(Long userId, User updateForUser) {
 
         User userToUpdate = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
 
@@ -42,14 +50,18 @@ public class UserService {
         return userRepository.save(userToUpdate);
     }
 
-    public void deleteUser(Long id) {
+    public void delete(Long id) {
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         userRepository.delete(user);
     }
 
-    public Book createBook(Long userId, Book book) {
-        User user = findUserById(userId);
-        book.setUser(user);
-        return bookService.createBook(book);
+    public WantedBook createWantedBook(Long id, @Valid WantedBook wantedBook) {
+        User user = findById(id);
+        wantedBook.setUser(user);
+        return wantedBookService.create(wantedBook);
+    }
+
+    public BookForExchange createBookForExchange(Long id, @Valid BookForExchange bookForExchange) {
+        return null;
     }
 }
