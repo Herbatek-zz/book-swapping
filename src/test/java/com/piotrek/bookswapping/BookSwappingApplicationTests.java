@@ -1,8 +1,11 @@
 package com.piotrek.bookswapping;
 
-import com.piotrek.bookswapping.respositories.BookRepository;
+import com.piotrek.bookswapping.respositories.BookForExchangeRepository;
 import com.piotrek.bookswapping.respositories.UserRepository;
+import com.piotrek.bookswapping.respositories.WantedBookRepository;
+import com.piotrek.bookswapping.services.BookForExchangeService;
 import com.piotrek.bookswapping.services.UserService;
+import com.piotrek.bookswapping.services.WantedBookService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,25 +19,33 @@ import static org.junit.Assert.assertNotNull;
 public class BookSwappingApplicationTests {
 
 	@Autowired
-	private BookRepository bookRepository;
+	private UserRepository userRepository;
 
 	@Autowired
-	private UserRepository userRepository;
+	private WantedBookRepository wantedBookRepository;
+
+	@Autowired
+	private BookForExchangeRepository bookForExchangeRepository;
 
 	@Autowired
 	private UserService userService;
 
 	@Autowired
-	private BookService bookService;
+	private WantedBookService wantedBookService;
+
+	@Autowired
+	private BookForExchangeService bookForExchangeService;
 
 
 
 	@Test
 	public void contextLoads() {
-		assertNotNull(bookRepository);
 		assertNotNull(userRepository);
-		assertNotNull(bookService);
+		assertNotNull(wantedBookRepository);
+		assertNotNull(bookForExchangeRepository);
 		assertNotNull(userService);
+		assertNotNull(wantedBookService);
+		assertNotNull(bookForExchangeService);
 	}
 
 }
