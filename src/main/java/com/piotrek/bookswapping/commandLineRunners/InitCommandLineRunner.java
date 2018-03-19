@@ -24,7 +24,7 @@ public class InitCommandLineRunner implements CommandLineRunner {
     public void run(String... args) throws Exception {
         User user = new User("Piotr", "Cużytek", "kenshin", "password",
                 "kenshin@email.com");
-        user = userService.createUser(user);
+        userService.createUser(user);
 
         Stream.of("Pan Lodowego Ogrodu Tom 1", "Idź i czekaj mrozów Tom 1", "Pan Lodowego Ogrodu Tom 2",
                 "Wiedźmin: Ostatnie życzenie", "PORĄB I SPAL", "Mitologia Nordycka", "Księga jesiennych demonów")

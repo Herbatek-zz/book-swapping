@@ -28,6 +28,10 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compile('org.springframework.boot:spring-boot-starter-data-jpa')
 	compile('org.springframework.boot:spring-boot-starter-security')
+	compile 'org.springframework.security:spring-security-config:5.0.3.RELEASE'
+	compile 'org.springframework.security:spring-security-oauth2-client:5.0.3.RELEASE'
+	compile 'org.springframework.security:spring-security-oauth2-jose:5.0.3.RELEASE'
+	compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity4:3.0.2.RELEASE'
 	compile('org.springframework.boot:spring-boot-devtools')
 	compile('com.h2database:h2')
 

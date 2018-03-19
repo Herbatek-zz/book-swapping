@@ -11,3 +11,4 @@
 src/main/resources/application.properties
 out/
 src/main/resources/profiles/
+src/main/resources/application.yml
