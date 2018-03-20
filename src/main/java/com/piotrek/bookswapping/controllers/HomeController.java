@@ -9,7 +9,7 @@ import java.security.Principal;
 public class HomeController {
 
     @GetMapping("/")
-    public String homePage(Principal user) {
-        return "Witaj na stronie głównej\n" + user.getName();
+    public String homePage() {
+        return "Witaj na stronie głównej\n";
     }
 }

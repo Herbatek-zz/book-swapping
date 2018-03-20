@@ -71,7 +71,7 @@ public class UserController {
         return new ResponseEntity<>(createdBook, HttpStatus.CREATED);
     }
 
-    @PostMapping("{id}/book-for-exchange")
+    @PostMapping("{id}/books-for-exchange")
     public ResponseEntity<?> createBookForExchange(@PathVariable Long id, @Valid @RequestBody BookForExchange bookForExchange, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             List errors = bindingResult.getAllErrors();
@@ -83,7 +83,7 @@ public class UserController {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    private ResponseEntity<String> userNotFoundHandler(UserNotFoundException e) {
+    public ResponseEntity<String> userNotFoundHandler(UserNotFoundException e) {
         return new ResponseEntity<>(e.getMESSAGE(), HttpStatus.NOT_FOUND);
     }
 }

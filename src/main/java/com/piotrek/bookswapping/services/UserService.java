@@ -47,7 +47,7 @@ public class UserService {
         userToUpdate.setFirstName(updateForUser.getFirstName());
         userToUpdate.setLastName(updateForUser.getLastName());
 
-        return userRepository.save(userToUpdate);
+        return create(userToUpdate);
     }
 
     public void delete(Long id) {
@@ -62,6 +62,8 @@ public class UserService {
     }
 
     public BookForExchange createBookForExchange(Long id, @Valid BookForExchange bookForExchange) {
-        return null;
+        User user = findById(id);
+        bookForExchange.setUser(user);
+        return bookForExchangeService.create(bookForExchange);
     }
 }

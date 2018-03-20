@@ -1,6 +1,7 @@
 package com.piotrek.bookswapping.controllers;
 
 import com.piotrek.bookswapping.entities.WantedBook;
+import com.piotrek.bookswapping.exceptions.BookNotFoundException;
 import com.piotrek.bookswapping.services.WantedBookService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,19 +22,19 @@ public class WantedBookController {
 
 
     @GetMapping
-    public ResponseEntity<Iterable<WantedBook>> findAllWantedBooks() {
+    public ResponseEntity<Iterable<WantedBook>> findAll() {
         Iterable<WantedBook> wantedBooks = wantedBookService.findAll();
         return new ResponseEntity<>(wantedBooks, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<WantedBook> findWantedBookById(@PathVariable Long id) {
+    public ResponseEntity<WantedBook> findById(@PathVariable Long id) {
         WantedBook wantedBook = wantedBookService.findById(id);
         return new ResponseEntity<>(wantedBook, HttpStatus.OK);
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<?> updateWantedBook(@PathVariable Long id, @RequestBody WantedBook updateForWantedBook, BindingResult bindingResult) {
+    public ResponseEntity<?> update(@PathVariable Long id, @RequestBody WantedBook updateForWantedBook, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
             List errors = bindingResult.getAllErrors();
             return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
@@ -43,9 +44,15 @@ public class WantedBookController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteWantedBook(@PathVariable Long id) {
+    public ResponseEntity delete(@PathVariable Long id) {
         wantedBookService.delete(id);
         return new ResponseEntity(HttpStatus.NO_CONTENT);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<String> userNotFoundHandler(BookNotFoundException e) {
+        return new ResponseEntity<>(e.getMESSAGE(), HttpStatus.NOT_FOUND);
     }
 
 }
