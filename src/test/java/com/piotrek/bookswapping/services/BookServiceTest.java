@@ -2,8 +2,6 @@ package com.piotrek.bookswapping.services;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class BookServiceTest {
 
     @Test

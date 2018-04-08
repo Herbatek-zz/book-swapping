@@ -3,8 +3,6 @@ package com.piotrek.bookswapping.entities;
 import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -14,7 +12,6 @@ import java.io.Serializable;
 @Entity
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 public class BookForExchange implements Serializable {
 
     @Id
@@ -23,7 +20,6 @@ public class BookForExchange implements Serializable {
     private Long id;
 
     @NotBlank
-    @NonNull
     @Size(min = 1, max = 200)
     private String title;
 
@@ -39,4 +35,8 @@ public class BookForExchange implements Serializable {
     @JsonIdentityReference(alwaysAsId = true)
     private User user;
 
+
+    public BookForExchange(String title) {
+        this.title = title;
+    }
 }

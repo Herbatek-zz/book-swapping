@@ -15,10 +15,6 @@ public class WantedBookService {
     }
 
 
-    public WantedBook create(WantedBook wantedBook) {
-        return wantedBookRepository.save(wantedBook);
-    }
-
     public Iterable<WantedBook> findAll() {
         return wantedBookRepository.findAll();
     }
@@ -42,5 +38,4 @@ public class WantedBookService {
                 .orElseThrow(BookNotFoundException::new);
         wantedBookRepository.delete(wantedBook);
     }
-
 }

@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface WantedBookRepository extends CrudRepository<WantedBook, Long>{
+
+    Iterable<WantedBook> findAllByUserId(Long userId);
 }

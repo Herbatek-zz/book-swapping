@@ -4,7 +4,9 @@ import com.piotrek.bookswapping.entities.BookForExchange;
 import com.piotrek.bookswapping.entities.User;
 import com.piotrek.bookswapping.entities.WantedBook;
 import com.piotrek.bookswapping.exceptions.UserNotFoundException;
+import com.piotrek.bookswapping.respositories.BookForExchangeRepository;
 import com.piotrek.bookswapping.respositories.UserRepository;
+import com.piotrek.bookswapping.respositories.WantedBookRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +17,14 @@ import javax.validation.Valid;
 public class UserService {
 
     private UserRepository userRepository;
-    private BookForExchangeService bookForExchangeService;
-    private WantedBookService wantedBookService;
+    private BookForExchangeRepository bookForExchangeRepository;
+    private WantedBookRepository wantedBookRepository;
 
-    public UserService(UserRepository userRepository, BookForExchangeService bookForExchangeService,
-                       WantedBookService wantedBookService) {
+    public UserService(UserRepository userRepository, BookForExchangeRepository bookForExchangeRepository,
+                       WantedBookRepository wantedBookRepository) {
         this.userRepository = userRepository;
-        this.bookForExchangeService = bookForExchangeService;
-        this.wantedBookService = wantedBookService;
+        this.bookForExchangeRepository = bookForExchangeRepository;
+        this.wantedBookRepository = wantedBookRepository;
     }
 
     public Iterable<User> findAll() {
@@ -58,12 +60,20 @@ public class UserService {
     public WantedBook createWantedBook(Long id, @Valid WantedBook wantedBook) {
         User user = findById(id);
         wantedBook.setUser(user);
-        return wantedBookService.create(wantedBook);
+        return wantedBookRepository.save(wantedBook);
     }
 
     public BookForExchange createBookForExchange(Long id, @Valid BookForExchange bookForExchange) {
         User user = findById(id);
         bookForExchange.setUser(user);
-        return bookForExchangeService.create(bookForExchange);
+        return bookForExchangeRepository.save(bookForExchange);
+    }
+
+    public Iterable<WantedBook> findWantedBooksById(Long userId) {
+        return wantedBookRepository.findAllByUserId(userId);
+    }
+
+    public Iterable<BookForExchange> findBooksForExchange(Long userId) {
+        return bookForExchangeRepository.findAllByUserId(userId);
     }
 }

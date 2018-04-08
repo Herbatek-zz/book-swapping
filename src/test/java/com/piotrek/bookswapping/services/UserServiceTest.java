@@ -2,7 +2,6 @@ package com.piotrek.bookswapping.services;
 
 import com.piotrek.bookswapping.entities.User;
 import com.piotrek.bookswapping.exceptions.UserNotFoundException;
-import com.piotrek.bookswapping.respositories.BookRepository;
 import com.piotrek.bookswapping.respositories.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,7 +11,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.util.Optional;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
 

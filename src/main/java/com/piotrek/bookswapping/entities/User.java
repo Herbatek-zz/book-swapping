@@ -1,13 +1,10 @@
 package com.piotrek.bookswapping.entities;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
-import com.fasterxml.jackson.annotation.JsonIdentityReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -25,7 +22,6 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
-@RequiredArgsConstructor
 @JsonIgnoreProperties(value = "createdAt", allowGetters = true)
 @JsonIdentityInfo(
         generator = ObjectIdGenerators.IntSequenceGenerator.class,
@@ -40,31 +36,27 @@ public class User implements Serializable, UserDetails {
 
     @Column(name = "first_name")
     @NotBlank
-    @NonNull
     @Size(min = 1, max = 30)
     private String firstName;
 
     @Column(name = "last_name")
     @NotBlank
-    @NonNull
     @Size(min = 1, max = 30)
     private String lastName;
 
-    @Column(unique = true)
+    @Column(unique = true, nullable = false, updatable = false)
     @NotBlank
-    @NonNull
     @Size(min = 2, max = 16)
     private String username;
 
+    @Column(nullable = false)
     @NotBlank
-    @NonNull
     @Size(min = 8, max = 32)
     private String password;
 
     @Email
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     @NotBlank
-    @NonNull
     private String email;
 
     @Column(name = "created_at", updatable = false, nullable = false)
@@ -81,6 +73,14 @@ public class User implements Serializable, UserDetails {
             cascade = CascadeType.ALL,
             mappedBy = "user")
     private List<WantedBook> wantedBooks = new ArrayList<>();
+
+    public User(String firstName, String lastName, String username, String password, String email) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

@@ -6,7 +6,6 @@ import com.piotrek.bookswapping.respositories.BookForExchangeRepository;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
-import java.util.Optional;
 
 @Service
 public class BookForExchangeService {
@@ -17,9 +16,6 @@ public class BookForExchangeService {
         this.bookForExchangeRepository = bookForExchangeRepository;
     }
 
-    public BookForExchange create(@Valid BookForExchange bookForExchange) {
-        return bookForExchangeRepository.save(bookForExchange);
-    }
 
     public Iterable<BookForExchange> findAll() {
         return bookForExchangeRepository.findAll();
@@ -35,7 +31,7 @@ public class BookForExchangeService {
         readBook.setTitle(updateForBook.getTitle());
         readBook.setDescription(updateForBook.getDescription());
         readBook.setReleaseYear(updateForBook.getReleaseYear());
-        return create(readBook);
+        return bookForExchangeRepository.save(readBook);
     }
 
     public void delete(Long id) {
