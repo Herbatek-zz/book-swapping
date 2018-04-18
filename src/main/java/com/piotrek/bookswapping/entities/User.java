@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,10 +15,7 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Data
@@ -28,10 +26,9 @@ import java.util.List;
         property = "id")
 public class User implements Serializable, UserDetails {
 
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(updatable = false, nullable = false)
+    @Column(updatable = false, nullable = false, unique = true)
     private Long id;
 
     @Column(name = "first_name")
@@ -46,12 +43,11 @@ public class User implements Serializable, UserDetails {
 
     @Column(unique = true, nullable = false, updatable = false)
     @NotBlank
-    @Size(min = 2, max = 16)
+    @Size(min = 1, max = 16)
     private String username;
 
     @Column(nullable = false)
     @NotBlank
-    @Size(min = 8, max = 32)
     private String password;
 
     @Email
@@ -59,6 +55,13 @@ public class User implements Serializable, UserDetails {
     @NotBlank
     private String email;
 
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles;
+
+    @CreationTimestamp
     @Column(name = "created_at", updatable = false, nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @CreatedDate

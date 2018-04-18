@@ -5,6 +5,7 @@ import com.piotrek.bookswapping.entities.User;
 import com.piotrek.bookswapping.entities.WantedBook;
 import com.piotrek.bookswapping.services.UserService;
 import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Random;
@@ -20,14 +21,14 @@ public class InitCommandLineRunner implements CommandLineRunner {
     }
 
     @Override
-    public void run(String... args) throws Exception {
+    public void run(String... args) {
 
         Random random = new Random();
 
-        User piotrek = new User("Piotr", "Cużytek", "kenshin", "password",
-                "kenshin@email.com");
-        User grzesiek = new User("Grzegorz", "Lenartowicz", "leny", "jestemGlupi123",
-                "leny@email.com");
+        User piotrek = new User("Piotr", "Cużytek", "kenshin",
+                new BCryptPasswordEncoder().encode("password"), "kenshin@email.com");
+        User grzesiek = new User("Grzegorz", "Lenartowicz", "leny",
+                new BCryptPasswordEncoder().encode("jestemGlupi123"), "leny@email.com");
         userService.create(piotrek);
         userService.create(grzesiek);
 

@@ -1,17 +1,18 @@
 package com.piotrek.bookswapping.controllers;
 
-
+import com.piotrek.bookswapping.dto.BookForExchangeDto;
 import com.piotrek.bookswapping.entities.BookForExchange;
 import com.piotrek.bookswapping.exceptions.BookNotFoundException;
 import com.piotrek.bookswapping.services.BookForExchangeService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("books-for-exchange")
 public class BookForExchangeController {
@@ -24,36 +25,39 @@ public class BookForExchangeController {
 
 
     @GetMapping
-    public ResponseEntity<Iterable<BookForExchange>> findAll() {
-        Iterable<BookForExchange> books = bookForExchangeService.findAll();
-        return new ResponseEntity<>(books, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public Iterable<BookForExchangeDto> findAll() {
+        log.info("Getting all books-for-exchange for exchange");
+        return bookForExchangeService.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BookForExchange> findById(@PathVariable Long id) {
-        BookForExchange book = bookForExchangeService.findById(id);
-        return new ResponseEntity<>(book, HttpStatus.OK);
+    @ResponseStatus(HttpStatus.OK)
+    public BookForExchangeDto findById(@PathVariable Long id) {
+        log.info("Getting book-for-exchange with id {}", id);
+        return bookForExchangeService.findById(id);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> update(@PathVariable Long id, @Valid @RequestBody BookForExchange updateForBook, BindingResult bindingResult) {
         if(bindingResult.hasErrors()) {
-            List errors = bindingResult.getAllErrors();
-            return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+            log.info("While processing update for book-for-exchange with id {} some errors occurred", id);
+            return ResponseEntity.badRequest().build();
         }
-        BookForExchange book = bookForExchangeService.update(id, updateForBook);
-        return new ResponseEntity<>(book, HttpStatus.OK);
+        log.info("Updating book-for-exchange with id {}", id);
+        bookForExchangeService.update(id, updateForBook);
+        return ResponseEntity.ok("Book has been updated successfully");
     }
 
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{id}")
-    public ResponseEntity delete(@PathVariable Long id) {
+    public void delete(@PathVariable Long id) {
+        log.info("Deleting book-for-exchange with id {}", id);
         bookForExchangeService.delete(id);
-        return new ResponseEntity(HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ResponseEntity<String> userNotFoundHandler(BookNotFoundException e) {
-        return new ResponseEntity<>(e.getMESSAGE(), HttpStatus.NOT_FOUND);
+    public ResponseEntity userNotFoundHandler(BookNotFoundException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
     }
 }

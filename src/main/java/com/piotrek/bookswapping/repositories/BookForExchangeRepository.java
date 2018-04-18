@@ -1,4 +1,4 @@
-package com.piotrek.bookswapping.respositories;
+package com.piotrek.bookswapping.repositories;
 
 import com.piotrek.bookswapping.entities.BookForExchange;
 import org.springframework.data.repository.CrudRepository;
