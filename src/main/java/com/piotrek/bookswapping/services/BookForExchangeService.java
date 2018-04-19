@@ -4,7 +4,7 @@ import com.piotrek.bookswapping.dto.BookForExchangeDto;
 import com.piotrek.bookswapping.entities.BookForExchange;
 import com.piotrek.bookswapping.exceptions.BookNotFoundException;
 import com.piotrek.bookswapping.repositories.BookForExchangeRepository;
-import org.modelmapper.ModelMapper;
+import com.piotrek.bookswapping.services.converters.BookForExchangeConverter;
 import org.modelmapper.internal.util.Lists;
 import org.springframework.stereotype.Service;
 
@@ -16,24 +16,29 @@ import java.util.stream.Collectors;
 public class BookForExchangeService {
 
     private BookForExchangeRepository bookForExchangeRepository;
-    private ModelMapper modelMapper;
+    private BookForExchangeConverter converter;
 
-    public BookForExchangeService(BookForExchangeRepository bookForExchangeRepository, ModelMapper modelMapper) {
+    public BookForExchangeService(BookForExchangeRepository bookForExchangeRepository, BookForExchangeConverter converter) {
         this.bookForExchangeRepository = bookForExchangeRepository;
-        this.modelMapper = modelMapper;
+        this.converter = converter;
     }
 
 
     public Iterable<BookForExchangeDto> findAll() {
         List<BookForExchange> books = Lists.from(bookForExchangeRepository.findAll().iterator());
         return books.stream()
-                .map(this::convertToDto)
+                .map(converter::convertToDto)
                 .collect(Collectors.toList());
     }
 
     public BookForExchangeDto findById(Long id) {
         BookForExchange book = bookForExchangeRepository.findById(id).orElseThrow(BookNotFoundException::new);
-        return convertToDto(book);
+        return converter.convertToDto(book);
+    }
+
+    BookForExchangeDto create(@Valid BookForExchange bookForExchange) {
+        BookForExchange book = bookForExchangeRepository.save(bookForExchange);
+        return converter.convertToDto(book);
     }
 
     public void update(Long id, @Valid BookForExchange bookUpdate) {
@@ -41,6 +46,7 @@ public class BookForExchangeService {
         readBook.setTitle(bookUpdate.getTitle());
         readBook.setDescription(bookUpdate.getDescription());
         readBook.setReleaseYear(bookUpdate.getReleaseYear());
+        bookForExchangeRepository.save(readBook);
     }
 
     public void delete(Long id) {
@@ -48,12 +54,11 @@ public class BookForExchangeService {
         bookForExchangeRepository.delete(book);
     }
 
-    private BookForExchangeDto convertToDto(BookForExchange bookForExchange) {
-        return modelMapper.map(bookForExchange, BookForExchangeDto.class);
-    }
-
-    private BookForExchange convertToEntity(BookForExchangeDto bookForExchangeDto) {
-        return modelMapper.map(bookForExchangeDto, BookForExchange.class);
+    Iterable<BookForExchangeDto> findBooksForExchangeByUserId(Long userId) {
+        List<BookForExchange> booksForExchange = Lists.from(bookForExchangeRepository.findAllByUserId(userId).iterator());
+        return booksForExchange.stream()
+                .map(converter::convertToDto)
+                .collect(Collectors.toList());
     }
 
 }

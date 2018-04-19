@@ -1,55 +1,64 @@
 package com.piotrek.bookswapping.services;
 
+import com.piotrek.bookswapping.dto.BookForExchangeDto;
+import com.piotrek.bookswapping.dto.UserDto;
+import com.piotrek.bookswapping.dto.WantedBookDto;
 import com.piotrek.bookswapping.entities.BookForExchange;
 import com.piotrek.bookswapping.entities.User;
 import com.piotrek.bookswapping.entities.WantedBook;
 import com.piotrek.bookswapping.exceptions.UserNotFoundException;
-import com.piotrek.bookswapping.respositories.BookForExchangeRepository;
-import com.piotrek.bookswapping.respositories.UserRepository;
-import com.piotrek.bookswapping.respositories.WantedBookRepository;
+import com.piotrek.bookswapping.repositories.UserRepository;
+import com.piotrek.bookswapping.services.converters.UserConverter;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.internal.util.Lists;
 import org.springframework.stereotype.Service;
 
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
 public class UserService {
 
     private UserRepository userRepository;
-    private BookForExchangeRepository bookForExchangeRepository;
-    private WantedBookRepository wantedBookRepository;
+    private BookForExchangeService bookForExchangeService;
+    private WantedBookService wantedBookService;
+    private UserConverter userConverter;
 
-    public UserService(UserRepository userRepository, BookForExchangeRepository bookForExchangeRepository,
-                       WantedBookRepository wantedBookRepository) {
+    public UserService(UserRepository userRepository, BookForExchangeService bookForExchangeService,
+                       WantedBookService wantedBookService, UserConverter userConverter) {
         this.userRepository = userRepository;
-        this.bookForExchangeRepository = bookForExchangeRepository;
-        this.wantedBookRepository = wantedBookRepository;
+        this.wantedBookService = wantedBookService;
+        this.bookForExchangeService = bookForExchangeService;
+        this.userConverter = userConverter;
     }
 
-    public Iterable<User> findAll() {
-        return userRepository.findAll();
+    public Iterable<UserDto> findAll() {
+        List<User> users = Lists.from(userRepository.findAll().iterator());
+        return users.stream()
+                .map(userConverter::convertToDto)
+                .collect(Collectors.toList());
     }
 
-    public User findById(Long userId) {
-        return userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+    public UserDto findById(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        return userConverter.convertToDto(user);
     }
 
-    public User create(User user) {
-        return userRepository.save(user);
+    public UserDto create(User user) {
+        User createdUser = userRepository.save(user);
+        return userConverter.convertToDto(createdUser);
     }
 
-    public User update(Long userId, User updateForUser) {
-
+    public void update(Long userId, User updateForUser) {
         User userToUpdate = userRepository.findById(userId).orElseThrow(UserNotFoundException::new);
-
         userToUpdate.setUsername(updateForUser.getUsername());
         userToUpdate.setEmail(updateForUser.getEmail());
         userToUpdate.setPassword(updateForUser.getPassword());
         userToUpdate.setFirstName(updateForUser.getFirstName());
         userToUpdate.setLastName(updateForUser.getLastName());
-
-        return create(userToUpdate);
+        userRepository.save(userToUpdate);
     }
 
     public void delete(Long id) {
@@ -57,23 +66,24 @@ public class UserService {
         userRepository.delete(user);
     }
 
-    public WantedBook createWantedBook(Long id, @Valid WantedBook wantedBook) {
-        User user = findById(id);
+    public WantedBookDto createWantedBook(Long id, @Valid WantedBook wantedBook) {
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         wantedBook.setUser(user);
-        return wantedBookRepository.save(wantedBook);
+        return wantedBookService.create(wantedBook);
     }
 
-    public BookForExchange createBookForExchange(Long id, @Valid BookForExchange bookForExchange) {
-        User user = findById(id);
+    public BookForExchangeDto createBookForExchange(Long id, @Valid BookForExchange bookForExchange) {
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
         bookForExchange.setUser(user);
-        return bookForExchangeRepository.save(bookForExchange);
+        return bookForExchangeService.create(bookForExchange);
     }
 
-    public Iterable<WantedBook> findWantedBooksById(Long userId) {
-        return wantedBookRepository.findAllByUserId(userId);
+    public Iterable<WantedBookDto> findWantedBooksById(Long userId) {
+        return wantedBookService.findWantedBookByUserId(userId);
     }
 
-    public Iterable<BookForExchange> findBooksForExchange(Long userId) {
-        return bookForExchangeRepository.findAllByUserId(userId);
+    public Iterable<BookForExchangeDto> findBooksForExchange(Long userId) {
+        return bookForExchangeService.findBooksForExchangeByUserId(userId);
     }
+
 }
