@@ -26,7 +26,7 @@ public class InitCommandLineRunner implements CommandLineRunner {
         Random random = new Random();
 
         User piotrek = new User("Piotr", "Cużytek", "kenshin",
-                new BCryptPasswordEncoder().encode("password"), "kenshin@email.com");
+            new BCryptPasswordEncoder().encode("password"), "kenshin@email.com");
         User grzesiek = new User("Grzegorz", "Lenartowicz", "leny",
                 new BCryptPasswordEncoder().encode("jestemGlupi123"), "leny@email.com");
         userService.create(piotrek);
